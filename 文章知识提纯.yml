@@ -1,0 +1,185 @@
+flowMeta:
+  name: 文章知识提纯
+  description: 这是一个用于将公众号文章转化为高密度知识笔记
+  avatarIcon: https://oss-beijing-m8.openstorage.cn/SparkBotProd/icon/common/emojiitem_00_10@2x.png
+  avatarColor: '#FFEAD5'
+  advancedConfig: '{"prologue":{"enabled":true,"inputExample":["","",""]},"textToSpeech":{"enabled":true,"vcn_cn":"x5_lingxiaotang_flow","vcn_en":""}}'
+  dslVersion: v1
+flowData:
+  nodes:
+  - id: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+    dragging: false
+    selected: false
+    width: 362
+    height: 90
+    position:
+      x: -25.109019607843152
+      y: 521.7086666666667
+    positionAbsolute:
+      x: -25.109019607843152
+      y: 521.7086666666667
+    type: custom
+    data:
+      allowInputReference: false
+      allowOutputReference: true
+      label: 开始
+      status: ''
+      nodeMeta:
+        aliasName: 开始节点
+        nodeType: 基础节点
+      inputs: [
+        ]
+      outputs:
+      - id: 0918514b-72a8-4646-8dd9-ff4a8fc26d44
+        name: AGENT_USER_INPUT
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: 文章链接
+        required: true
+        deleteDisabled: true
+      nodeParam: {
+        }
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/start-node-icon.png
+      description: 工作流的开启节点，用于定义流程调用所需的业务变量信息。
+      updatable: false
+  - id: node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    dragging: false
+    selected: false
+    width: 362
+    height: 90
+    position:
+      x: 886.8833333333332
+      y: 343.91588235294114
+    positionAbsolute:
+      x: 886.8833333333332
+      y: 343.91588235294114
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: false
+      label: 结束
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        aliasName: 结束节点
+        nodeType: 基础节点
+      inputs:
+      - id: 82de2b42-a059-4c98-bffb-b6b4800fcac9
+        name: output
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 42c00f7d-6f07-4aff-bd02-650bc07f4668
+              nodeId: spark-llm::018d7295-0fd3-40f6-bc3d-7fb14d87aa05
+              name: output
+            contentErrMsg: ''
+        fileType: ''
+      outputs: [
+        ]
+      nodeParam:
+        template: '{{output}}'
+        streamOutput: true
+        outputMode: 1
+        templateErrMsg: ''
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/end-node-icon.png
+      description: 工作流的结束节点，用于输出工作流运行后的最终结果。
+      updatable: false
+  - id: spark-llm::018d7295-0fd3-40f6-bc3d-7fb14d87aa05
+    dragging: false
+    selected: false
+    width: 362
+    height: 148
+    position:
+      x: 419.6895958871353
+      y: 449.9094595887135
+    positionAbsolute:
+      x: 419.6895958871353
+      y: 449.9094595887135
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: 大模型_1
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 基础节点
+        aliasName: 大模型
+      inputs:
+      - id: 30c6be7a-d541-48ae-b099-39f062c4f68f
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 0918514b-72a8-4646-8dd9-ff4a8fc26d44
+              nodeId: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+              name: AGENT_USER_INPUT
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 42c00f7d-6f07-4aff-bd02-650bc07f4668
+        name: output
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        template: '{{input}}'
+        respFormat: 0
+        appId: 680ab54f
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        llmId: 593066024
+        domain: Qwen3-32B
+        serviceId: Qwen3-32B
+        url: http://192.168.200.19:10040/v1/chat/completions
+        modelId: 1
+        isThink: false
+        multiMode: false
+        modelName: 本地qwen3
+        modelEnabled: true
+        llmIdErrMsg: ''
+        source: openai
+        extraParams:
+          temperature: 1
+        systemTemplate: "/no_think\n你现在是「Knowledge Refiner 2.0」——中文内容世界里的去伪存真算法。 \
+          \ \n任务：对输入的公众号文章+评论进行「三阶提纯」  \n1) 信源过滤：标出所有缺乏权威出处或无法交叉验证的陈述；  \n2) 数据打假：\
+          用「可复查」标准，列出所有无法溯源的数字、比例、案例；  \n3) 概念祛魅：把“黑话”“造词”“情绪金句”降级为普通描述，并给出是否保留建议。\
+          \  \n输出格式：{“保留知识”:[],“伪知识”:[]}, 每一项用≤50 字说明理由。  \n禁止输出任何与任务无关的寒暄。"
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: 根据输入的提示词，调用选定的大模型，对提示词作出回答
+      updatable: false
+  edges:
+  - source: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+    target: spark-llm::018d7295-0fd3-40f6-bc3d-7fb14d87aa05
+    type: customEdge
+    id: reactflow__edge-node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783-spark-llm::018d7295-0fd3-40f6-bc3d-7fb14d87aa05
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: spark-llm::018d7295-0fd3-40f6-bc3d-7fb14d87aa05
+    target: node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    type: customEdge
+    id: reactflow__edge-spark-llm::018d7295-0fd3-40f6-bc3d-7fb14d87aa05-node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
